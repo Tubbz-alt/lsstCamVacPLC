@@ -35,7 +35,7 @@ class PlutoGateway():
     def close(self):
         self.sock.close()
 
-plutoGateway = PlutoGateway('192.168.1.100', 502)
+plutoGateway = PlutoGateway('192.168.1.131', 502)
 
 
 # Reset all registers to 0
