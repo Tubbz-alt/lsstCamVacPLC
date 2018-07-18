@@ -35,8 +35,8 @@ class PlutoGateway():
     def close(self):
         self.sock.close()
 
-plutoGateway = PlutoGateway('192.168.1.131', 502)
-
+#plutoGateway = PlutoGateway('192.168.1.131', 502)
+plutoGateway = PlutoGateway('192.168.1.100', 502)
 
 # Reset all registers to 0
 for add in range(0,41+1):
@@ -68,6 +68,7 @@ plutoGateway.gateway_config_write_read(20,0x10)
 plutoGateway.gateway_config_write_read(21,0x11)
 plutoGateway.gateway_config_write_read(22,0x12)
 plutoGateway.gateway_config_write_read(23,0x13)
+plutoGateway.gateway_config_write_read(24,0x14)
 
 
 print ("Done")
