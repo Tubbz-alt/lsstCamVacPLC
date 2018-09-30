@@ -1,30 +1,36 @@
+#
+# LSST Vacuum Pluto Gateway configuration script
+#
+# SLAC National Accelerator Laboratory
+# Joao Rodrigues (joaoprod@slac.stanford.edu)
+#
+
 from umodbus import conf
 from umodbus.client import tcp
 import socket
 import time
 
-
+a = [0]*42
 
 class PlutoGateway():
 
     def __init__(self, ip , port):
         # Enable values to be signed (default is False).
         conf.SIGNED_VALUES = False
-
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((ip, port))
 
-
-
-
     def gateway_config_write_read(self,add, value):
         config_id = 4
-
         message = tcp.write_multiple_registers(slave_id=config_id, starting_address=add, values=[value])
         response = tcp.send_message(message, self.sock)
 
-        print(".")
         time.sleep(0.1)
+
+        print("..")
+
+        global a
+        a[add]=value
 
         message = tcp.read_holding_registers(config_id, add, 1)
         response = tcp.send_message(message, self.sock)
@@ -35,8 +41,7 @@ class PlutoGateway():
     def close(self):
         self.sock.close()
 
-#plutoGateway = PlutoGateway('192.168.1.131', 502)
-plutoGateway = PlutoGateway('192.168.1.100', 502)
+plutoGateway = PlutoGateway('192.168.1.131', 502)
 
 # Reset all registers to 0
 for add in range(0,41+1):
@@ -45,8 +50,8 @@ for add in range(0,41+1):
 # Activate Data to Pluto Area 0, 1
 plutoGateway.gateway_config_write_read(1,0b011)
 
-# Data to Pluto Timeout = 1000 ms
-plutoGateway.gateway_config_write_read(2,1000)
+# Data to Pluto Timeout = 0
+plutoGateway.gateway_config_write_read(2,0)
 
 # Additional Data Areas for PLC 0
 plutoGateway.gateway_config_write_read(5,0x01)
@@ -70,8 +75,9 @@ plutoGateway.gateway_config_write_read(22,0x12)
 plutoGateway.gateway_config_write_read(23,0x13)
 plutoGateway.gateway_config_write_read(24,0x14)
 
-
 print ("Done")
+
+print(a)
 
 plutoGateway.close()
 
